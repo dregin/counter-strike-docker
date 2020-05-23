@@ -1,5 +1,6 @@
-[![Build Status](https://travis-ci.org/JimTouz/counter-strike-docker.svg?branch=master)](https://travis-ci.org/JimTouz/counter-strike-docker)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/JimTouz/counter-strike-docker/blob/master/LICENSE)
+Forked from https://github.com/jimtouz/counter-strike-docker
+
+Updated to work with Steam Guard Code and docker-compose.
 
 # Docker image for Counter Strike 1.6 Dedicated Server
 
@@ -8,18 +9,15 @@
 ### Minimum properties setup
 
 ```bash
-docker run -d -p 26900:26900/udp -p 27020:27020/udp -p 27015:27015/udp -p 27015:27015 -e ADMIN_STEAM=0:1:1234566 --name cs cs16ds/server:latest
+docker-compose up -d
 ```
-
-### All properties setup
-```bash
-docker run -d -p 26900:26900/udp -p 27020:27020/udp -p 27015:27015/udp -p 27015:27015 -e MAXPLAYERS=32 -e START_MAP=de_dust2 -e SERVER_NAME="My Server Name" -e START_MONEY=16000 -e BUY_TIME=0.25 -e FRIENDLY_FIRE=1 -e ADMIN_STEAM=0:1:1234566 --name cs cs16ds/server:latest +log
-```
-
 #### Propetries
 
 | Name | Description | Default Value |
 | --- | --- | --- |
+| `STEAM_USER` | Steam user name to authenticate dedicated server | None |
+| `STEAM_PASSWORD` | Steam password for auth user | None |
+| `STEAM_GUARD_CODE` | Will be received after first run of `docker-compose build` | None |
 | `MAXPLAYERS` | The maximum number of players | `32` |
 | `START_MAP` | The initial map | `de_dust2` |
 | `SERVER_NAME` | The server name | `Counter-Strike 1.6 Server` |
@@ -34,19 +32,13 @@ docker run -d -p 26900:26900/udp -p 27020:27020/udp -p 27015:27015/udp -p 27015:
 ## Stop the server
 
 ```bash
-docker stop cs
-```
-
-## Start existing (stopped) server
-
-```bash
-docker start cs
+docker-compose up -d
 ```
 
 ## Remove the server
 
 ```bash
-docker rm cs
+docker-compose rm
 ```
 
 # Attributions

@@ -1,0 +1,16 @@
+version: '3'
+services:
+  cs:
+    env_file: .env
+    build: 
+      context: .
+      args:
+        - steam_user=$STEAM_USER
+        - steam_password=$STEAM_PASSWORD
+        - steam_guard_code=$STEAM_GUARD_CODE
+    working_dir: /opt/hlds
+    command: /bin/hlds_run.sh
+    ports:
+      - "127.0.0.1:27015:27015"
+    volumes:
+      - ./logs:/root/Steam/logs/

@@ -1,7 +1,8 @@
-FROM debian:jessie
+FROM debian:buster
 
 ARG steam_user=anonymous
 ARG steam_password=
+ARG steam_guard_code=
 ARG metamod_version=1.20
 ARG amxmod_version=1.8.2
 
@@ -10,14 +11,15 @@ RUN apt update && apt install -y lib32gcc1 curl
 # Install SteamCMD
 RUN mkdir -p /opt/steam && cd /opt/steam && \
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
+RUN if [ "x$steam_guard_code" = "x" ] ; then /opt/steam/steamcmd.sh +login $steam_user $steam_password +quit && echo "Please check your email and update steam_guard_code in .env"; exit -1; fi
 
 # Install HLDS
 RUN mkdir -p /opt/hlds
 # Workaround for "app_update 90" bug, see https://forums.alliedmods.net/showthread.php?p=2518786
-RUN /opt/steam/steamcmd.sh +login $steam_user $steam_password +force_install_dir /opt/hlds +app_update 90 validate +quit
-RUN /opt/steam/steamcmd.sh +login $steam_user $steam_password +force_install_dir /opt/hlds +app_update 70 validate +quit || :
-RUN /opt/steam/steamcmd.sh +login $steam_user $steam_password +force_install_dir /opt/hlds +app_update 10 validate +quit || :
-RUN /opt/steam/steamcmd.sh +login $steam_user $steam_password +force_install_dir /opt/hlds +app_update 90 validate +quit
+RUN /opt/steam/steamcmd.sh +login $steam_user $steam_password $steam_guard_code +force_install_dir /opt/hlds +app_update 90 validate +quit
+RUN /opt/steam/steamcmd.sh +login $steam_user $steam_password $steam_guard_code +force_install_dir /opt/hlds +app_update 70 validate +quit || :
+RUN /opt/steam/steamcmd.sh +login $steam_user $steam_password $steam_guard_code +force_install_dir /opt/hlds +app_update 10 validate +quit || :
+RUN /opt/steam/steamcmd.sh +login $steam_user $steam_password $steam_guard_code +force_install_dir /opt/hlds +app_update 90 validate +quit
 RUN mkdir -p ~/.steam && ln -s /opt/hlds ~/.steam/sdk32
 RUN ln -s /opt/steam/ /opt/hlds/steamcmd
 ADD files/steam_appid.txt /opt/hlds/steam_appid.txt
